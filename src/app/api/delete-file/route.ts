@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { v2 as cloudinary, DestroyOptions } from 'cloudinary';
+import { v2 as cloudinary } from 'cloudinary';
+
 
 // 1. تعريف واجهة (Interface) لجسم طلب POST
 // هذا يحدد أنواع البيانات التي نتوقعها من العميل
