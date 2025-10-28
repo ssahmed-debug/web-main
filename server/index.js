@@ -27,7 +27,7 @@ io.on("connection", (socket) => {
   socket.on(
     "newMessage",
     async (
-      { roomID, sender, message, replayData, voiceData = null, tempId, fileData = null },
+      { roomID, sender, message, replayData, voiceData = null, tempId },
       callback
     ) => {
       const msgData = {
@@ -36,7 +36,6 @@ io.on("connection", (socket) => {
         roomID,
         seen: [],
         voiceData,
-        fileData, // إضافة دعم الملفات
         createdAt: Date.now(),
         tempId,
         status: "sent",
