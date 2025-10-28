@@ -1,5 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { v2 as cloudinary, DestroyOptions } from 'cloudinary'; // 👈 تم إضافة DestroyOptions
+import { v2 as cloudinary, DestroyOptions } from 'cloudinary';
+
+// 1. تعريف واجهة (Interface) لجسم طلب POST
+// هذا يحدد أنواع البيانات التي نتوقعها من العميل
+interface DeleteFileRequestBody {
+  public_id: string;
+  // استخدام نوع Cloudinary المحدد لضمان السلامة
+  resource_type?: DestroyOptions['resource_type'];
+}
+
+// 2. تعريف واجهة لجسم طلب DELETE (الحذف المتعدد)
+interface BulkDeleteRequestBody {
+  public_ids: string[];
+  resource_type?: DestroyOptions['resource_type'];
+}
 
 // إعداد Cloudinary
 cloudinary.config({
@@ -10,7 +24,8 @@ cloudinary.config({
 
 export async function POST(request: NextRequest) {
   try {
-    const { public_id, resource_type = 'auto' } = await request.json();
+    // ✅ التصحيح الأول: تحديد نوع البيانات المتوقعة من request.json()
+    const { public_id, resource_type = 'auto' } = (await request.json()) as DeleteFileRequestBody;
     
     if (!public_id) {
       return NextResponse.json(
@@ -21,8 +36,8 @@ export async function POST(request: NextRequest) {
 
     // حذف الملف من Cloudinary
     const result = await cloudinary.uploader.destroy(public_id, {
-      // ✅ تصحيح الخطأ: استخدام النوع الصحيح لـ resource_type
-      resource_type: resource_type as DestroyOptions['resource_type'] 
+      // لم نعد بحاجة لـ "as DestroyOptions['resource_type']" لأنه محدد بالفعل في الواجهة
+      resource_type: resource_type 
     });
 
     if (result.result === 'ok' || result.result === 'not found') {
@@ -39,6 +54,7 @@ export async function POST(request: NextRequest) {
     }
 
   } catch (error) {
+    // ✅ تصحيح إضافي: استخدام 'unknown' بدلاً من 'any' في كتلة catch
     console.error('Delete error:', error);
     return NextResponse.json(
       { success: false, error: 'حدث خطأ أثناء حذف الملف' },
@@ -50,7 +66,8 @@ export async function POST(request: NextRequest) {
 // دالة لحذف عدة ملفات
 export async function DELETE(request: NextRequest) {
   try {
-    const { public_ids, resource_type = 'auto' } = await request.json();
+    // ✅ التصحيح الثاني: تحديد نوع البيانات المتوقعة من request.json()
+    const { public_ids, resource_type = 'auto' } = (await request.json()) as BulkDeleteRequestBody;
     
     if (!public_ids || !Array.isArray(public_ids) || public_ids.length === 0) {
       return NextResponse.json(
@@ -60,10 +77,10 @@ export async function DELETE(request: NextRequest) {
     }
 
     // حذف عدة ملفات
+    // public_id هنا يتم تحديده بشكل صحيح الآن كـ string
     const deletePromises = public_ids.map(public_id =>
       cloudinary.uploader.destroy(public_id, { 
-        // ✅ تصحيح الخطأ: استخدام النوع الصحيح لـ resource_type
-        resource_type: resource_type as DestroyOptions['resource_type'] 
+        resource_type: resource_type 
       })
     );
 
@@ -82,6 +99,7 @@ export async function DELETE(request: NextRequest) {
     });
 
   } catch (error) {
+    // ✅ تصحيح إضافي: استخدام 'unknown' بدلاً من 'any' في كتلة catch
     console.error('Bulk delete error:', error);
     return NextResponse.json(
       { success: false, error: 'حدث خطأ أثناء حذف الملفات' },
