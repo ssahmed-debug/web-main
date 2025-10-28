@@ -17,7 +17,7 @@ import FilePreview from "../modules/FilePreview";
 import { v4 as uuidv4 } from "uuid";
 import { pendingMessagesService } from "@/utils/pendingMessages";
 import { isMobile } from "@/utils/isMobile";
-import Image from "next/image";
+
 
 interface Props {
   replayData?: Partial<Message>;
