@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { v2 as cloudinary } from 'cloudinary';
+import { v2 as cloudinary, DestroyOptions } from 'cloudinary'; // 👈 تم إضافة DestroyOptions
 
 // إعداد Cloudinary
 cloudinary.config({
@@ -21,7 +21,8 @@ export async function POST(request: NextRequest) {
 
     // حذف الملف من Cloudinary
     const result = await cloudinary.uploader.destroy(public_id, {
-      resource_type: resource_type as any
+      // ✅ تصحيح الخطأ: استخدام النوع الصحيح لـ resource_type
+      resource_type: resource_type as DestroyOptions['resource_type'] 
     });
 
     if (result.result === 'ok' || result.result === 'not found') {
@@ -60,7 +61,10 @@ export async function DELETE(request: NextRequest) {
 
     // حذف عدة ملفات
     const deletePromises = public_ids.map(public_id =>
-      cloudinary.uploader.destroy(public_id, { resource_type: resource_type as any })
+      cloudinary.uploader.destroy(public_id, { 
+        // ✅ تصحيح الخطأ: استخدام النوع الصحيح لـ resource_type
+        resource_type: resource_type as DestroyOptions['resource_type'] 
+      })
     );
 
     const results = await Promise.allSettled(deletePromises);
