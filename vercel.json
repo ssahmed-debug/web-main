@@ -1,0 +1,15 @@
+{
+  "buildCommand": "next build",
+  "outputDirectory": ".next",
+  "framework": "nextjs",
+  "installCommand": "npm install",
+  "devCommand": "next dev",
+  "env": {
+    "NEXT_PUBLIC_SOCKET_SERVER_URL": "@socket-server-url",
+    "NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME": "@cloudinary-cloud-name",
+    "NEXT_PUBLIC_CLOUDINARY_API_KEY": "@cloudinary-api-key",
+    "NEXT_PUBLIC_CLOUDINARY_API_SECRET": "@cloudinary-api-secret",
+    "MONGODB_URI": "@mongodb-uri",
+    "secretKey": "@secret-key"
+  }
+}
