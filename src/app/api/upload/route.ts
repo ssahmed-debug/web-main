@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { v2 as cloudinary } from 'cloudinary';
+import { v2 as cloudinary, UploadApiOptions, UploadApiResponse } from 'cloudinary';
 
 // إعداد Cloudinary
 cloudinary.config({
@@ -11,7 +11,8 @@ cloudinary.config({
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
-    const file = formData.get('file') as File;
+    // تم الافتراض هنا أن الخطأ في السطر 24 هو تحويل `formData.get('file')` إلى `File`
+    const file = formData.get('file') as File; 
     
     if (!file) {
       return NextResponse.json(
@@ -54,7 +55,8 @@ export async function POST(request: NextRequest) {
     const uploadResponse = await new Promise((resolve, reject) => {
       cloudinary.uploader.upload_stream(
         {
-          resource_type: resourceType as any,
+          // ✅ تصحيح الخطأ: استخدام النوع الصحيح لـ resource_type
+          resource_type: resourceType as UploadApiOptions['resource_type'], 
           folder: 'chat_files',
           public_id: `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`,
         },
@@ -68,7 +70,8 @@ export async function POST(request: NextRequest) {
       ).end(buffer);
     });
 
-    const result = uploadResponse as any;
+    // ✅ تصحيح الخطأ: استخدام النوع الصحيح لنتائج الرفع
+    const result = uploadResponse as UploadApiResponse; 
 
     return NextResponse.json({
       success: true,
@@ -89,10 +92,9 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// التحقق من حالة الخدمة
+// التحقق من حالة الخدمة (كما هو)
 export async function GET() {
   try {
-    // اختبار بسيط للاتصال بـ Cloudinary
     const result = await cloudinary.api.ping();
     
     return NextResponse.json({
