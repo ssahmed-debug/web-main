@@ -10,22 +10,20 @@ export const schema = new Schema(
       { type: Schema.ObjectId, ref: "Message", required: true, default: [] },
     ],
     roomID: { type: Schema.ObjectId, ref: "Room", required: true },
-    replayedTo: {
-      type: { message: String, msgID: String, username: String } || null,
-      default: null,
+    replayedTo: { // تم تصحيح الـ type وإزالة default: null
+      type: { message: String, msgID: String, username: String } 
     },
     isEdited: { type: Boolean, default: false },
     hideFor: [{ type: Schema.ObjectId, ref: "User", default: [] }],
-    pinnedAt: { type: String || null, default: null },
-    voiceData: {
+    pinnedAt: { type: String }, // تم تصحيح الـ type وإزالة default: null
+    voiceData: { // تم إزالة default: null
       type: {
         src: { type: String, required: true },
         duration: { type: Number, required: true },
         playedBy: [{ type: String }],
       },
-      default: null,
     },
-    fileData: {
+    fileData: { // تم إزالة default: null (حل الخطأ الرئيسي)
       type: {
         name: { type: String, required: true },
         type: { type: String, required: true },
@@ -34,9 +32,8 @@ export const schema = new Schema(
         public_id: { type: String },
         resource_type: { type: String },
         format: { type: String },
-        duration: { type: Number }, // للملفات الصوتية والفيديو
+        duration: { type: Number },
       },
-      default: null,
     },
     tempID: { type: String, unique: true },
     status: {
