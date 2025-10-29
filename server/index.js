@@ -27,7 +27,7 @@ io.on("connection", (socket) => {
   socket.on(
     "newMessage",
     async (
-      { roomID, sender, message, replayData, voiceData = null, tempId },
+      { roomID, sender, message, replayData, voiceData = null, fileData = null, tempId },
       callback
     ) => {
       const msgData = {
@@ -36,6 +36,7 @@ io.on("connection", (socket) => {
         roomID,
         seen: [],
         voiceData,
+        fileData,
         createdAt: Date.now(),
         tempId,
         status: "sent",
